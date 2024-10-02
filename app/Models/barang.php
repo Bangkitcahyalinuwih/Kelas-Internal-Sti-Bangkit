@@ -10,11 +10,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class barang extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'nama_barang',
+        'jenis_barang_id',
+        'harga',
+        'foto',
+        'stok',
+    ];
+
     protected $table = 'barang';
 
-    public function jenis_barang(): BelongsTo
+    public function jenisbarang(): BelongsTo
     {
-        return $this->belongsTo(jenis_barang::class);
+        return $this->belongsTo(jenisbarang::class, 'jenis_barang_id');
     }
 
     public function detail_transaksi(): HasMany

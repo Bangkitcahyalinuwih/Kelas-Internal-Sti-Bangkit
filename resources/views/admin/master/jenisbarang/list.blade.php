@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('css')
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.bootstrap5.css">
+@endsection
 @section('content')
     <div class="app-content-header"> <!--begin::Container-->
         <div class="container-fluid"> <!--begin::Row-->
@@ -8,9 +11,9 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/app">Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            Dashboard
+                            {{ $title }}
                         </li>
                     </ol>
                 </div>
@@ -18,82 +21,43 @@
         </div> <!--end::Container-->
     </div> <!--end::App Content Header--> <!--begin::App Content-->
 
-    <div class="row">
-        <div class="col-md-12">
+    <div class="row justify-content-center">
+        <div class="col-md-12 ">
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
-                        <h3 class="card-title">Bordered Table</h3>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#modalcreate">+
+                        <h3 class="card-title">{{ $table_title }}</h3>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalcreate">
                             TAMBAH DATA
                         </button>
                     </div>
                 </div> <!-- /.card-header -->
 
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="datajenis">
                         <thead>
                             <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Task</th>
-                                <th>Progress</th>
-                                <th style="width: 40px">Label</th>
+                                <th style="width: 1rem">No</th>
+                                <th>Nama Jenis Barang</th>
+                                <th class="text-center" style="width: 13rem">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="align-middle">
-                                <td>1.</td>
-                                <td>Update software</td>
-                                <td>
-                                    <div class="progress progress-xs">
-                                        <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                                    </div>
-                                </td>
-                                <td><span class="badge text-bg-danger">55%</span></td>
-                            </tr>
-                            <tr class="align-middle">
-                                <td>2.</td>
-                                <td>Clean database</td>
-                                <td>
-                                    <div class="progress progress-xs">
-                                        <div class="progress-bar text-bg-warning" style="width: 70%"></div>
-                                    </div>
-                                </td>
-                                <td> <span class="badge text-bg-warning">70%</span> </td>
-                            </tr>
-                            <tr class="align-middle">
-                                <td>3.</td>
-                                <td>Cron job running</td>
-                                <td>
-                                    <div class="progress progress-xs progress-striped active">
-                                        <div class="progress-bar text-bg-primary" style="width: 30%"></div>
-                                    </div>
-                                </td>
-                                <td> <span class="badge text-bg-primary">30%</span> </td>
-                            </tr>
-                            <tr class="align-middle">
-                                <td>4.</td>
-                                <td>Fix and squish bugs</td>
-                                <td>
-                                    <div class="progress progress-xs progress-striped active">
-                                        <div class="progress-bar text-bg-success" style="width: 90%"></div>
-                                    </div>
-                                </td>
-                                <td> <span class="badge text-bg-success">90%</span> </td>
-                            </tr>
+                            @foreach ($data_jenis_barang as $row)
+                                <tr class="align-middle">
+                                    <td>{{ $row->id }}</td>
+                                    <td>{{ $row->nama_jenis_barang }}</td>
+                                    <td class="text-center">
+                                        <a href=#modaledit{{ $row->id }} data-bs-toggle="modal"
+                                            class="btn btn-success"><i class="fas fa-edit"></i></a>
+                                        <a href=#modaldelete{{ $row->id }} data-bs-toggle="modal"
+                                            class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div> <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item"> <a class="page-link" href="#">&laquo;</a> </li>
-                        <li class="page-item"> <a class="page-link" href="#">1</a> </li>
-                        <li class="page-item"> <a class="page-link" href="#">2</a> </li>
-                        <li class="page-item"> <a class="page-link" href="#">3</a> </li>
-                        <li class="page-item"> <a class="page-link" href="#">&raquo;</a> </li>
-                    </ul>
-                </div>
             </div> <!-- /.card -->
         </div> <!-- /.col -->
     </div> <!--end::Row-->
@@ -102,99 +66,89 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5">Tamnbah Data</h1>
+                    <h1 class="modal-title fs-5">Tambah Data</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/barang/store/">
+                    <form action="{{ route('jenisbarang/store') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label>Jenis Barang</label>
-                            <input type="text" class="form-control" name="nama_jenis"required>
-                        </div>
-                        <div class="form-group">
-                            <label>Barang</label>
-                            <input type="text" class="form-control" name="nama_barang"required>
-                        </div>
-                        <div class="form-group">
-                            <label>Harga</label>
-                            <input type="text" class="form-control" name="harga"required>
-                        </div>
-                        <div class="form-group">
-                            <label>Stok</label>
-                            <input type="text" class="form-control" name="stok"required>
+                            <label>Nama Jenis</label>
+                            <input type="text" class="form-control" name="nama_jenis_barang"required>
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                            class="fas fa-undo"></i></button>
-                    <button type="button" class="btn btn-primary" class="fas fa-save">Save Changes</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-primary" class="fas fa-save">Save Changes</button>
                 </div>
                 </form>
             </div>
         </div>
     </div>
 
-    @foreach ($data_barang as $d)
-        <div class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @foreach ($data_jenis_barang as $d)
+        <div class="modal fade" id="modaledit{{ $d->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5">Edit {{ $title }}</h1>
+                        <h1 class="modal-title fs-5">Edit</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <form method="POST">
-                            @csrf
+                    <form method="POST" action="/jenisbarang/update/{{ $d->id }}">
+                        @csrf
+                        <div class="modal-body">
                             <div class="form-group">
-                                <label>Jenis Barang</label>
-                                <input type="text" value="" class="form-control" name="nama_jenis"required>
+                                <label>Nama Jenis</label>
+                                <input type="text" value="{{ $d->nama_jenis_barang }}" class="form-control"
+                                    name="nama_jenis_barang" required>
                             </div>
-                            <div class="form-group">
-                                <label>Barang</label>
-                                <input type="text" value="" class="form-control" name="nama_barang"required>
-                            </div>
-                            <div class="form-group">
-                                <label>Harga</label>
-                                <input type="text" class="form-control" name="harga"required>
-                            </div>
-                            <div class="form-group">
-                                <label>Stok</label>
-                                <input type="text" class="form-control" name="stok"required>
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                                class="fas fa-undo">Close</i></button>
-                        <button type="button" class="btn btn-primary" class="fas fa-save">Save Changes</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">close</button>
+                            <button type="submit" class="btn btn-outline-primary">Save Changes</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     @endforeach
 
-    @foreach ($data_barang as $c)
-        <div class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @foreach ($data_jenis_barang as $c)
+        <div class="modal fade" id="modaldelete{{ $c->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5">Edit {{ $title }}</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete jenis barang</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <form method="GET" action="/barang/destroy/">
+                    <form method="GET" action="jenisbarang/destroy/{{ $c->id }}">
+                        @csrf
+                        <div class="modal-body">
+                            ...
+
                             <div class="form-group">
                                 <h5>Apakah anda yakin ingin menghapus data ini?</h5>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                                        class="fas fa-undo">Close</i></button>
-                                <button type="button" class="btn btn-danger" class="fas fa-trash">Buak</button>
-                            </div>
-                        </form>
-                    </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal">close</button>
+                            <button type="submit" class="btn btn-outline-primary">Save Changes</button>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
     @endforeach
+@endsection
+@section('js')
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.bootstrap5.js"></script>
+    <script>
+        new DataTable('#datajenis');
+    </script>
 @endsection

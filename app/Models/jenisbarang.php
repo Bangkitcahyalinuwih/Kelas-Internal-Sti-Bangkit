@@ -9,17 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class jenisbarang extends Model
 {   
     use HasFactory;
+    protected $fillable = [
+        'nama_jenis_barang',
+    ];
+
     protected $table = 'jenis_barang';
     public function barang(): HasMany
     {
         return $this->hasMany(Barang::class);
     }
-
-    protected $fillable = [
-        'nama_jenis_barang',
-    ];
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
 } 

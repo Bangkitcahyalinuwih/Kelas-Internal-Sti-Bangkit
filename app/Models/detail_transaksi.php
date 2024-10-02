@@ -13,7 +13,7 @@ class detail_transaksi extends Model
     public function barang(): BelongsTo
 
     {
-        return $this->belongsTo(barang::class);
+        return $this->belongsTo(barang::class, 'barang_id');
     }
 
     public function transaksi(): BelongsTo

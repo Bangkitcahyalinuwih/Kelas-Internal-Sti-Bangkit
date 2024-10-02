@@ -11,30 +11,28 @@ use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
     public function index()  
-    {   
-        $data = array(
-            'title' => 'data-user',
-            'data_user' => User::all(),
-        );
-        return view('admin.user.list', $data);
+    {       
+            $table_title = 'Table User';
+            $title = 'Data User';
+            $data_user = User::all();
+        return view('admin.user.list', compact('data_user', 'title', 'table_title'));
     } 
-
     public function store(Request $request)
-    {
+    {   
+        // dd($request);
         $request->validate([    
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => 'required|string'
         ]);
-
-        User::create([
+      $user =  User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => hash::make($request->password),
             'role' => $request->role,
         ]);
-        
-        return redirect()->route('user')->with('succes', 'Data user Berhasil');
+        // dd($user);
+        return redirect('user')->with('succes', 'Data user Berhasil');
 
         // $validator = Validator::make($request->all(),  [
         //     'name' => 'required|string|max:255',
@@ -66,8 +64,6 @@ class UserController extends Controller
         // }catch(\Exception $e){
         //     return redirect()->route('user/list')->with('failed', $e->getMessage());
         // }
-
-      
     } 
 
     public function update(Request $request, $id)
