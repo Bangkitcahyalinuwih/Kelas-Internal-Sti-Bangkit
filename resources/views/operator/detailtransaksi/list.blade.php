@@ -27,7 +27,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">{{ $title }}</h3>
-                        <a href="/pos" class="btn btn-primary">
+                        <a href="/transaksi" class="btn btn-primary">
                             TAMBAH DATA
                         </a>
                     </div>

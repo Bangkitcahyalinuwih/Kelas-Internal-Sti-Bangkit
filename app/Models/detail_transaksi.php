@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class detail_transaksi extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'transaksi_id',
+        'barang_id',
+        'qty',
+        'harga',
+        'subtotal',
+    ];
     protected $table = 'detail_transaksi';
 
     public function barang(): BelongsTo

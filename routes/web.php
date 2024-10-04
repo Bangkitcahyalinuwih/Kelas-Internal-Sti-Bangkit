@@ -37,8 +37,11 @@ route::post('/barang/store', [BarangController::class,'store'])->name('barang/st
 route::post('/barang/update/{id}', [BarangController::class,'update']);
 route::get('/barang/destroy/{id}', [BarangController::class,'destroy']);
 
-route::get('/transaksi', [TransaksiController::class,'index'])->name('transaksi/list');
+route::get('/detail', [TransaksiController::class,'index'])->name('detail/list');
+route::get('/transaksi', [TransaksiController::class,'transaksi'])->name('transaksi/list');
 route::get('/pos', [TransaksiController::class,'pos'])->name('pos/list');
+route::get('/filter', [TransaksiController::class,'filter'])->name('filter');
+
 
 
 

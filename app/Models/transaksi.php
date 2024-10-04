@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class transaksi extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'tgl_transaksi',
+        'user_id',
+        'total_bayar',
+        'pembayaran_cs',
+        'kembalian_cs',
+    ];
     protected $table = 'transaksi';
 
     public function detail_transaksi(): HasMany

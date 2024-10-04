@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\transaksi;
 use App\Models\detail_transaksi;
 use App\Models\Barang;
+use App\Models\jenisbarang;
 use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
@@ -17,12 +18,33 @@ class TransaksiController extends Controller
         return view('operator.detailtransaksi.list', compact('data_transaksi', 'title', 'title_table'));
     }   
 
+    public function transaksi()
+    {
+        $title = 'Data - Transaksi';
+        $title_detail = 'Data - detail Transaksi';
+        $title_transaksi = 'Data - Transaksi';
+        $data_detail_transaksi = Barang::all();
+        return view('operator.transaksi.transaksi', compact('data_detail_transaksi', 'title_detail', 'title', 'title_transaksi'));
+    } 
     public function pos()
     {
-        $title = 'Pos - Transaksi';
-        $title_table = 'Data - Transaksi';
-        $data_transaksi = Barang::all();
-        return view('operator.transaksi.pos', compact('data_transaksi', 'title', 'title_table'));
+        $title = 'Point of sale';
+        $data_pos = Barang::all();
+        $data_pos_jenis = JenisBarang::all();
+        return view('operator.pos.pos', compact('data_pos','data_pos_jenis', 'title'));
+    }
+
+    public function filter(Request $request)
+    {
+        $query = jenisbarang::query();
+
+        // Filter berdasarkan pilihan
+        if ($request->filled('filter_option')) {
+            $query->where('jenis_barang_id', $request->filter_option);
+        }
+
+        $data = $query->get();
+        return view('filter', compact('data'));
     }
 
     

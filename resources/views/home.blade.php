@@ -85,5 +85,16 @@
                     More info <i class="bi bi-link-45deg"></i> </a>
             </div> <!--end::Small Box Widget 4-->
         </div> <!--end::Col-->
+
+        <div class="col-lg-12 connectedSortable">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Sales Value</h3>
+                </div>
+                <div class="card-body">
+                    <div id="revenue-chart"></div>
+                </div>
+            </div> <!-- /.card --> <!-- DIRECT CHAT -->
+        </div>
     </div> <!--end::Row--> <!--begin::Row-->
 @endsection

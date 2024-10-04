@@ -26,7 +26,7 @@
     <div class="row">
         <div class="col-md-8">
             <div class="row">
-                @foreach ($data_transaksi as $row)
+                @foreach ($data_detail_transaksi as $row)
                     <div class="col-md-6">
                         <div class="card border shadow-none mb-2">
 
@@ -51,21 +51,17 @@
                                         <ul class="list-inline mb-0 font-size-16">
                                             <li class="list-inline-item">
                                                 <a href="#" class="text-muted px-1">
-                                                    <i class="mdi mdi-trash-can-outline"></i>
+                                                    <i class="fa-solid fa-square-plus"></i>
                                                 </a>
                                             </li>
-                                            <li class="list-inline-item">
-                                                <a href="#" class="text-muted px-1">
-                                                    <i class="mdi mdi-heart-outline"></i>
-                                                </a>
-                                            </li>
+
                                         </ul>
                                     </div>
                                 </div>
 
                                 <div>
                                     <div class="row">
-                                        <div class="col-md-5">
+                                        {{-- <div class="col-md-5">
                                             <div class="mt-3">
                                                 <p class="text-muted mb-2">Quantity</p>
                                                 <div class="d-inline-flex">
@@ -82,17 +78,17 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
+                                        </div> --}}
+                                        {{-- <div class="col-md-3">
                                             <div class="mt-3">
                                                 <p class="text-muted mb-2">Total</p>
                                                 <h5>$900</h5>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-3">
                                             <div class="mt-3">
-                                                <p class="text-muted mb-2">Stok</p>
-                                                <h5>{{ $row->stok }}</h5>
+                                                <p class="text-muted mb-2">Stok : <span class="text       rt tejsjinenus">
+                                                        {{ $row->stok }}</span> </p>
                                             </div>
                                         </div>
                                     </div>
@@ -123,11 +119,35 @@
             </div> <!-- end row-->
         </div>
 
+
         <div class="col-xl-4">
             <div class="mt-5 mt-lg-0">
                 <div class="card border shadow-none">
                     <div class="card-header bg-transparent border-bottom py-3 px-4">
-                        <h5 class="font-size-16 mb-0">{{ $title }} <span class="float-end">#MN0124</span>
+                        <h5 class="font-size-16 mb-0">{{ $title_detail }} <span class="float-end"></span>
+                        </h5>
+                    </div>
+                    @foreach ($data_detail_transaksi as $row)
+                        <div class="card-body p-4 pt-2">
+
+                            <div class="table-responsive">
+                                <table class="table mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ $row->nama_barang }}</td>
+                                            <td class="text-end">$ 780</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- end table-responsive -->
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="card border shadow-none mt-2">
+                    <div class="card-header bg-transparent border-bottom py-3 px-4">
+                        <h5 class="font-size-16 mb-0">{{ $title_transaksi }} <span class="float-end"></span>
                         </h5>
                     </div>
                     <div class="card-body p-4 pt-2">
@@ -136,35 +156,37 @@
                             <table class="table mb-0">
                                 <tbody>
                                     <tr>
-                                        <td>Sub Total :</td>
+                                        <td>Date:</td>
                                         <td class="text-end">$ 780</td>
                                     </tr>
                                     <tr>
-                                        <td>Discount : </td>
-                                        <td class="text-end">- $ 78</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Shipping Charge :</td>
-                                        <td class="text-end">$ 25</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Estimated Tax : </td>
-                                        <td class="text-end">$ 18.20</td>
+                                        <td>User :</td>
+                                        <td class="text-end">$ 780</td>
                                     </tr>
                                     <tr class="bg-light">
-                                        <th>Total :</th>
+                                        <th>Total Bayar :</th>
                                         <td class="text-end">
                                             <span class="fw-bold">
                                                 $ 745.2
                                             </span>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>Pembayaran :</td>
+                                        <td class="text-end">$ 25</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kembalian : </td>
+                                        <td class="text-end">$ 18.20</td>
+                                    </tr>
+
                                 </tbody>
                             </table>
                         </div>
                         <!-- end table-responsive -->
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
