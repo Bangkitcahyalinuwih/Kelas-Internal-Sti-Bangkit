@@ -29,9 +29,18 @@ class TransaksiController extends Controller
     public function pos()
     {
         $title = 'Point of sale';
-        $data_pos = Barang::all();
-        $data_pos_jenis = JenisBarang::all();
-        return view('operator.pos.pos', compact('data_pos','data_pos_jenis', 'title'));
+        $data_pos = Barang::with('jenisbarang')->get();
+        return view('operator.pos.pos', compact('data_pos', 'title'));
+    }
+
+   public function store(Request $request)
+    {
+        dd($request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data transaksi berhasil ditambahkan',
+        ]);
     }
 
     public function filter(Request $request)

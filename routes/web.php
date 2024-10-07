@@ -40,6 +40,7 @@ route::get('/barang/destroy/{id}', [BarangController::class,'destroy']);
 route::get('/detail', [TransaksiController::class,'index'])->name('detail/list');
 route::get('/transaksi', [TransaksiController::class,'transaksi'])->name('transaksi/list');
 route::get('/pos', [TransaksiController::class,'pos'])->name('pos/list');
+route::post('/pos/store', [TransaksiController::class,'store'])->name('pos/store');
 route::get('/filter', [TransaksiController::class,'filter'])->name('filter');
 
 

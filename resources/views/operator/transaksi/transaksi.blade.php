@@ -43,16 +43,17 @@
                                             </h5>
 
                                             <p class=" text-muted mb-0 mt-1">Price : <span
-                                                    class="fw-medium">{{ number_format($row->harga, 2, ',', '.') }}</span>
+                                                    class="fw-medium text-dark">{{ number_format($row->harga, 2, ',', '.') }}</span>
                                             </p>
                                         </div>
                                     </div>
                                     <div class="flex-shrink-0 ms-2">
                                         <ul class="list-inline mb-0 font-size-16">
                                             <li class="list-inline-item">
-                                                <a href="#" class="text-muted px-1">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                    onclick="addToCart('{{ $row->id }}', '{{ $row->nama_barang }}', '{{ asset('storage/public/products/' . $row->foto) }}', '{{ $row->harga }}')">
                                                     <i class="fa-solid fa-square-plus"></i>
-                                                </a>
+                                                </button>
                                             </li>
 
                                         </ul>
@@ -61,33 +62,9 @@
 
                                 <div>
                                     <div class="row">
-                                        {{-- <div class="col-md-5">
-                                            <div class="mt-3">
-                                                <p class="text-muted mb-2">Quantity</p>
-                                                <div class="d-inline-flex">
-                                                    <select class="form-select form-select-sm w-xl">
-                                                        <option value="0" selected="">0</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                        <option value="5">5</option>
-                                                        <option value="6">6</option>
-                                                        <option value="7">7</option>
-                                                        <option value="8">8</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div> --}}
-                                        {{-- <div class="col-md-3">
-                                            <div class="mt-3">
-                                                <p class="text-muted mb-2">Total</p>
-                                                <h5>$900</h5>
-                                            </div>
-                                        </div> --}}
                                         <div class="col-md-3">
                                             <div class="mt-3">
-                                                <p class="text-muted mb-2">Stok : <span class="text       rt tejsjinenus">
+                                                <p class="text-muted mb-2">Stok : <span class="text-dark">
                                                         {{ $row->stok }}</span> </p>
                                             </div>
                                         </div>
@@ -123,27 +100,71 @@
         <div class="col-xl-4">
             <div class="mt-5 mt-lg-0">
                 <div class="card border shadow-none">
-                    <div class="card-header bg-transparent border-bottom py-3 px-4">
-                        <h5 class="font-size-16 mb-0">{{ $title_detail }} <span class="float-end"></span>
-                        </h5>
-                    </div>
-                    @foreach ($data_detail_transaksi as $row)
-                        <div class="card-body p-4 pt-2">
-
-                            <div class="table-responsive">
-                                <table class="table mb-0">
-                                    <tbody>
-                                        <tr>
-                                            <td>{{ $row->nama_barang }}</td>
-                                            <td class="text-end">$ 780</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- end table-responsive -->
+                    <div class="row">
+                        <div class="card-header bg-transparent border-bottom py-3 px-4">
+                            <h5 class="font-size-16 mb-0">{{ $title_detail }} <span class="float-end"></span>
+                            </h5>
                         </div>
-                    @endforeach
+                        @foreach ($data_detail_transaksi as $row)
+                            <div class="card-body p-4 pt-1">
+                                <div class="table-responsive">
+                                    <table class="table mb-1">
+                                        <div class="card border shadow-none">
+
+                                            <div class="card-body">
+
+                                                <div class="d-flex align-items-start">
+                                                    <div class="me-4 mt-3">
+                                                        <img width="60"
+                                                            src="{{ asset('/storage/public/products/' . $row->foto) }}"
+                                                            class="avatar-lg rounded" alt="">
+                                                    </div>
+                                                    <div class="flex-grow-1 align-self-center overflow-hidden">
+                                                        <div>
+                                                            <h5 class="text-truncate fs-5" class="text-dark">
+                                                                {{ $row->nama_barang }}
+                                                            </h5>
+
+                                                            <p class="text-muted mb-0 mt-1 fs-8">Rp.<span
+                                                                    class="fw-medium text-dark">{{ number_format($row->harga, 2, ',', '.') }}</span>
+                                                            </p>
+
+                                                            <div class="d-inline-flex mt-1">
+                                                                <select class="form-select form-select-sm w-md">
+                                                                    <option value="0" selected="">0</option>
+                                                                    <option value="1">1</option>
+                                                                    <option value="2">2</option>
+                                                                    <option value="3">3</option>
+                                                                    <option value="4">4</option>
+                                                                    <option value="5">5</option>
+                                                                    <option value="6">6</option>
+                                                                    <option value="7">7</option>
+                                                                    <option value="8">8</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <ul class="list-inline mb-0 fs-7">
+                                                            <li class="list-inline-item">
+                                                                <a href="#" class="text-muted px-1"
+                                                                    onclick="removeItem(this)">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </table>
+                                </div>
+                                <!-- end table-responsive -->
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
+
 
                 <div class="card border shadow-none mt-2">
                     <div class="card-header bg-transparent border-bottom py-3 px-4">
@@ -156,28 +177,30 @@
                             <table class="table mb-0">
                                 <tbody>
                                     <tr>
-                                        <td>Date:</td>
-                                        <td class="text-end">$ 780</td>
-                                    </tr>
-                                    <tr>
-                                        <td>User :</td>
-                                        <td class="text-end">$ 780</td>
-                                    </tr>
-                                    <tr class="bg-light">
-                                        <th>Total Bayar :</th>
-                                        <td class="text-end">
-                                            <span class="fw-bold">
-                                                $ 745.2
-                                            </span>
+                                        <td>Date </td>
+                                        <td class="text-end"><input type="date" class="form-control form-control-sm">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Pembayaran :</td>
-                                        <td class="text-end">$ 25</td>
+                                        <td>User </td>
+                                        <td class="text-end">{{ $row->name }}</td>
+
+                                    </tr>
+                                    <tr class="bg-light">
+                                        <th>Total Bayar</th>
+                                        <td class="text-end">
+                                            <input type="text" class="form-control form-control-sm">
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>Kembalian : </td>
-                                        <td class="text-end">$ 18.20</td>
+                                        <td>Pembayaran </td>
+                                        <td class="text-end"><input type="text" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kembalian </td>
+                                        <td class="text-end"><input type="text" class="form-control form-control-sm">
+                                        </td>
                                     </tr>
 
                                 </tbody>
