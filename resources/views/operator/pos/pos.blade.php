@@ -85,7 +85,7 @@
 
                                         <td>Nama Kasir :
                                             <input name="nam" type="text" class="form-control"
-                                                aria-describedby="emailHelp">
+                                                value="{{ Auth::user()->name }}">
                                         </td>
                                         <td>Tanggal :
                                             <input name="tanggal" type="date" class="form-control">

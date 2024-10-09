@@ -2,6 +2,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JenisBarangController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\DetailTransaksiController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TransaksiController;
@@ -39,9 +40,10 @@ route::get('/barang/destroy/{id}', [BarangController::class,'destroy']);
 
 route::get('/detail', [TransaksiController::class,'index'])->name('detail/list');
 route::get('/transaksi', [TransaksiController::class,'transaksi'])->name('transaksi/list');
-route::get('/pos', [TransaksiController::class,'pos'])->name('pos/list');
-route::post('/pos/store', [TransaksiController::class,'store'])->name('pos/store');
-route::get('/filter', [TransaksiController::class,'filter'])->name('filter');
+
+route::get('/pos', [DetailTransaksiController::class,'pos'])->name('pos/list');
+route::post('/pos/store', [DetailTransaksiController::class,'store'])->name('pos/store');
+
 
 
 
