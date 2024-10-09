@@ -84,11 +84,12 @@
                                     <tbody>
 
                                         <td>Nama Kasir :
-                                            <input name="nam" type="text" class="form-control"
+                                            <input name="nam" type="text" class="form-control" disabled
                                                 value="{{ Auth::user()->name }}">
                                         </td>
                                         <td>Tanggal :
-                                            <input name="tanggal" type="date" class="form-control">
+                                            <input name="date" type="text" class="form-control" disabled
+                                                value="{{ date('d-m-Y') }}" id="date">
                                         </td>
 
                                         <tr class="bg-light">
@@ -272,7 +273,13 @@
         // Function to send data to the server when clicking the Checkout button
         function checkout() {
             const uangMasuk = parseInt(document.getElementById('uangMasuk').value) || 0;
-            const uangKembalian = parseInt(document.getElementById('uangKembalian').value) || 0;
+            const uangkembalian = parseInt(document.getElementById('uangKembalian').value.replace('Rp. ', '').replace(
+                /,/g, '')) || 0;
+            const grandTotal = parseInt(document.querySelector('.grand-total').textContent.replace('Rp. ', '').replace(
+                /,/g, '')) || 0;
+
+            const date = document.getElementById('date').value;
+
             fetch('/pos/store', {
                     method: 'POST',
                     headers: {
@@ -282,7 +289,9 @@
                     body: JSON.stringify({
                         items: cartItems,
                         bayar: uangMasuk,
-                        kembalian: uangKembalian.replace('Rp. ', '').replace(/,/g, ''),
+                        kembalian: uangkembalian,
+                        total: grandTotal,
+                        date: date
                     })
                 })
                 .then(response => response.json())

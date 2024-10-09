@@ -12,10 +12,10 @@ class TransaksiController extends Controller
     public function index() 
     { 
         $title = 'Detail - Transaksi';
-            $title_table = 'Data - Transaksi';
-    $data_transaksi = detail_transaksi::all();
+        $title_table = 'Data - Transaksi';
+        $data_transaksi = detail_transaksi::all();
     
-        return view('operator.detailtransaksi.list', compact('data_transaksi', 'title', 'title_table'));
+        return view('operator.transaksi.list', compact('data_transaksi', 'title', 'title_table'));
     }   
 
     public function transaksi()
