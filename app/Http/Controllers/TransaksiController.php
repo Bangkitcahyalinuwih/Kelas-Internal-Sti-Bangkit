@@ -9,23 +9,29 @@ use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
 {
-    public function index() 
+    public function transaksi() 
+    { 
+        $title = 'Transaksi';
+        $title_table = 'Data - Transaksi';
+        $data_transaksi = transaksi::with('detail_transaksi')->get();
+        return view('operator.transaksi.transaksi', compact('data_transaksi', 'title', 'title_table'));
+    }  
+    public function detail($id) 
     { 
         $title = 'Detail - Transaksi';
-        $title_table = 'Data - Transaksi';
-        $data_transaksi = detail_transaksi::all();
-    
-        return view('operator.transaksi.list', compact('data_transaksi', 'title', 'title_table'));
+        $title_table = 'Data - Detail Transaksi';
+        $data_detail = transaksi::with('detail_transaksi')->find($id);
+        return view('operator.transaksi.detail', compact('data_detail', 'title', 'title_table'));
     }   
 
-    public function transaksi()
-    {
-        $title = 'Data - Transaksi';
-        $title_detail = 'Data - detail Transaksi';
-        $title_transaksi = 'Data - Transaksi';
-        $data_detail_transaksi = Barang::all();
-        return view('operator.transaksi.transaksi', compact('data_detail_transaksi', 'title_detail', 'title', 'title_transaksi'));
-    } 
+    // public function transaksi()
+    // {
+    //     $title = 'Data - Transaksi';
+    //     $title_detail = 'Data - detail Transaksi';
+    //     $title_transaksi = 'Data - Transaksi';
+    //     $data_detail_transaksi = Barang::all();
+    //     return view('operator.transaksi.transaksi', compact('data_detail_transaksi', 'title_detail', 'title', 'title_transaksi'));
+    // } 
     
 
 

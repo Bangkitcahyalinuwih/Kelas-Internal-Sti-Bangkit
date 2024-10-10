@@ -84,7 +84,7 @@
                                     <tbody>
 
                                         <td>Nama Kasir :
-                                            <input name="nam" type="text" class="form-control" disabled
+                                            <input name="user" type="text" class="form-control" disabled
                                                 value="{{ Auth::user()->name }}">
                                         </td>
                                         <td>Tanggal :
@@ -101,7 +101,7 @@
 
                                         <td>Uang Masuk :
                                             <input name="uang_masuk" type="text" class="form-control" id="uangMasuk"
-                                                oninput="hitungKembalian()">
+                                                oninput="hitungKembalian()" required>
                                         </td>
                                         <td>Uang Kembalian :
                                             <input name="uang_kembalian" type="text" class="form-control"
@@ -261,25 +261,44 @@
         }
 
         function hitungKembalian() {
-            var uangMasuk = parseInt(document.getElementById('uangMasuk').value) || 0;
-            var grandTotal = parseInt(document.querySelector('.grand-total').textContent.replace('Rp. ', '').replace(/,/g,
-                '')) || 0;
+            // Ambil nilai input
+            var uangMasuk = parseInt(document.getElementById('uangMasuk').value.replace(/\./g, '')) || 0;
+
+            // Format nilai menjadi format dengan pemisah ribuan
+            document.getElementById('uangMasuk').value = uangMasuk.toLocaleString('id-ID');
+
+            var grandTotalText = document.querySelector('.grand-total').textContent
+                .trim(); // Mengambil teks dan menghapus spasi di awal dan akhir
+            var grandTotal = parseInt(grandTotalText.replace(/[^\d]/g, '')) || 0;
 
             var uangKembalian = uangMasuk - grandTotal;
-            document.getElementById('uangKembalian').value = 'Rp. ' + (uangKembalian > 0 ? uangKembalian.toLocaleString() :
-                0);
-        }
 
+            if (uangKembalian < 0) {
+                document.getElementById('uangKembalian').value = 'Uang tidak cukup';
+            } else {
+                document.getElementById('uangKembalian').value = 'Rp. ' + uangKembalian.toLocaleString();
+            }
+        }
         // Function to send data to the server when clicking the Checkout button
         function checkout() {
-            const uangMasuk = parseInt(document.getElementById('uangMasuk').value) || 0;
+            const uangMasuk = document.getElementById('uangMasuk').value || 0;
+
+
             const uangkembalian = parseInt(document.getElementById('uangKembalian').value.replace('Rp. ', '').replace(
                 /,/g, '')) || 0;
             const grandTotal = parseInt(document.querySelector('.grand-total').textContent.replace('Rp. ', '').replace(
                 /,/g, '')) || 0;
+            // Log data sebelum dikirim
+            // console.log({
+            //     items: cartItems,
+            //     bayar: uangMasuk,
+            //     kembalian: uangkembalian,
+            //     total: grandTotal,
+            //     date: date,
+            //     username: user
+            // });
 
-            const date = document.getElementById('date').value;
-
+            // Send data to the server
             fetch('/pos/store', {
                     method: 'POST',
                     headers: {
@@ -288,20 +307,26 @@
                     },
                     body: JSON.stringify({
                         items: cartItems,
-                        bayar: uangMasuk,
-                        kembalian: uangkembalian,
                         total: grandTotal,
-                        date: date
+                        bayar: uangMasuk,
+                        kembalian: uangkembalian
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
-                    window.location.href = '/pos'; // Redirect to checkout
+                    console.log('Response dari server:', data);
+                    console.log(data.success);
+                    if (data.success) {
+                        window.location.href = '/transaksi'; // Redirect to checkout
+                    } else {
+                        alert('Gagal menyimpan transaksi: ' + data.message);
+                    }
                 })
                 .catch((error) => {
-                    console.error('Error:', error);
+                    console.error('Error dalam proses fetch:', error);
+                    alert('Terjadi kesalahan saat menghubungi server.');
                 });
+
         }
 
         // Attach the checkout function to the Checkout button

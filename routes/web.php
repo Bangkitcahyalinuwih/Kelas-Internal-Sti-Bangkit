@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TransaksiController;
 use App\Models\transaksi;
+use App\Http\Middleware\AuthUserMiddleware;
 use Illuminate\Support\Facades\Route;
 
 //login logout route
@@ -38,15 +39,20 @@ route::post('/barang/store', [BarangController::class,'store'])->name('barang/st
 route::post('/barang/update/{id}', [BarangController::class,'update']);
 route::get('/barang/destroy/{id}', [BarangController::class,'destroy']);
 
-route::get('/detail', [TransaksiController::class,'index'])->name('detail/list');
-route::get('/transaksi', [TransaksiController::class,'transaksi'])->name('transaksi/list');
 
-route::get('/pos', [DetailTransaksiController::class,'pos'])->name('pos/list');
-route::post('/pos/store', [DetailTransaksiController::class,'store'])->name('pos/store');
+// route::get('/transaksi', [TransaksiController::class,'transaksi'])->name('transaksi/list');
+// route::get('/pos', [DetailTransaksiController::class,'index'])->name('pos/list');
+// route::get('/pos/create', [DetailTransaksiController::class,'create']);
+// Route::post('/pos/store', [DetailTransaksiController::class, 'store'])->name('pos/store');
 
-
-
-
+Route::middleware(['auth'])->group(function () {
+    
+    route::get('/pos', [DetailTransaksiController::class,'index'])->name('pos/list');
+    route::get('/pos/create', [DetailTransaksiController::class,'create']);
+    Route::post('/pos/store', [DetailTransaksiController::class, 'store'])->name('pos/store');
+    route::get('/transaksi', [TransaksiController::class,'transaksi'])->name('transaksi/list');
+    route::get('/detail/{id}', [TransaksiController::class,'detail'])->name('detail/list');
+});
 
 
 

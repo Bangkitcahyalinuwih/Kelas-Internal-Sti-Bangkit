@@ -54,7 +54,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item"> <a href="{{ route('detail/list') }}" class="nav-link"> <i
+                            <li class="nav-item"> <a href="{{ route('transaksi/list') }}" class="nav-link"> <i
                                         class="nav-icon bi bi-cart-check"></i>
                                     <p>Transaksi</p>
                                 </a> </li>
