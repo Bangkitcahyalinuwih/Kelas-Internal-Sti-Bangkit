@@ -22,7 +22,7 @@
     </div> <!--end::App Content Header--> <!--begin::App Content-->
 
     <div class="row">
-        <div class="col-md-11 ">
+        <div class="col-md-12 ">
             <div class="card mb-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -51,8 +51,9 @@
                                         <td class="text-center">
                                             <button type="button"
                                                 onclick="addToCart('{{ $row->id }}', '{{ $row->nama_barang }}', '{{ asset('storage/public/products/' . $row->foto) }}', '{{ $row->harga }}', '{{ $row->stok }}')"
-                                                class="btn btn-primary">
-                                                <i class="fas fa-shopping-cart"></i>
+                                                class="btn btn-outline-primary" {{ $row->stok == 0 ? 'disabled' : '' }}
+                                                data-id="{{ $row->id }}">
+                                                <i class="fas fa-shopping-cart"></i> Add to Cart
                                             </button>
                                         </td>
                                     </tr>
@@ -71,11 +72,8 @@
                 <div class="mt-5 mt-lg-0">
                     <div class="card border shadow-none">
                         <div class="card-header bg-transparent border-bottom py-3 px-4">
-                            @php
-                                $no = 1;
-                            @endphp
-                            <h5 class="font-size-16 mb-0">Order Summary <span
-                                    class="float-end">#NT012{{ $no++ }}</span>
+
+                            <h5 class="font-size-16 mb-0">Order Summary <span class="float-end"></span>
                             </h5>
                         </div>
                         <div class="card-body p-4 pt-2">
@@ -119,20 +117,18 @@
 
             <div class="row my-4">
                 <div class="col-sm-6">
-                    <a href="ecommerce-products.html" class="btn btn-link text-muted">
-                        <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
+                    <a href="/transaksi" class="btn btn-link text-muted">
+                        <i class="mdi mdi-arrow-left me-1"></i> Data Transaksi </a>
                 </div> <!-- end col -->
                 <div class="col-sm-6">
                     <div class="text-sm-end mt-2 mt-sm-0">
-                        <a href="javascript:void(0)" class="btn btn-success btn-checkout">
+                        <a href="javascript:void(0)" class="btn btn-success btn-checkout" id="checkoutBtn"
+                            onclick="validateCheckout(event)">
                             <i class="mdi mdi-cart-outline me-1"></i> Checkout </a>
                     </div>
                 </div> <!-- end col -->
             </div> <!-- end row-->
         </div>
-    </div>
-
-    </div>
     </div>
 @endsection
 
@@ -148,8 +144,9 @@
         let cartItems = []; // Array to hold cart item data
 
         function addToCart(id, nama_barang, foto, harga, stok) {
-            var container = document.getElementById('cart-items');
 
+            // Create the item container
+            var container = document.getElementById('cart-items');
             var newItem = document.createElement('div');
             newItem.classList.add('col-md-6');
             newItem.setAttribute('data-id', id);
@@ -214,16 +211,39 @@
         `;
             container.appendChild(newItem);
             updateGrandTotal();
+            // updateCheckoutButton();
+
+            // Disable the "Add to Cart" button when the item is added to the cart
+            document.querySelector(`button[data-id = '${id}']`).disabled = true;
         }
+        document.querySelectorAll('.btn-add-to-cart').forEach(function(button) {
+            button.addEventListener('click', function() {
+                // Ambil stok dari atribut data-stok
+                const stok = parseInt(this.getAttribute('data-stok'));
+
+                // Cek apakah stok barang 0
+                if (stok === 0) {
+                    alert('Stok barang habis!');
+                    // Nonaktifkan fungsi addToCart
+                    return;
+                }
+
+                // Panggil fungsi addToCart jika stok tidak 0
+                addToCart(this);
+
+            });
+        });
 
         function updateSubTotal(selectElement, id, harga, stok) {
             var quantity = parseInt(selectElement.value);
             var subtotalElement = selectElement.closest('.d-inline-flex').parentNode.nextElementSibling.querySelector(
                 '.item-total');
-            var subtotal = quantity * harga;
 
+            // Hitung subtotal
+            var subtotal = quantity * harga;
             subtotalElement.textContent = 'Rp. ' + subtotal.toLocaleString();
 
+            // Update stok
             var itemContainer = selectElement.closest('.col-md-6');
             var stockElement = itemContainer.querySelector('.item-stock');
             stockElement.textContent = stok - quantity;
@@ -242,9 +262,11 @@
                     harga_satuan: harga,
                     subtotal: subtotal,
                 });
+
             }
 
             updateGrandTotal();
+            // updateCheckoutButton();
         }
 
         function removeItem(element) {
@@ -253,6 +275,9 @@
             cartItems = cartItems.filter(item => item.id != itemId); // Remove item from cart array
             itemContainer.remove();
             updateGrandTotal();
+
+            // Re-enable the "Add to Cart" button when the item is removed from the cart
+            document.querySelector(`button[data-id='${itemId}']`).disabled = false;
         }
 
         function updateGrandTotal() {
@@ -279,24 +304,33 @@
                 document.getElementById('uangKembalian').value = 'Rp. ' + uangKembalian.toLocaleString();
             }
         }
+
+        // function updateCheckoutButton() {
+        //     const checkoutBtn = document.getElementById('checkoutBtn');
+        //     checkoutBtn.disabled = cartItems.length === 0; // Nonaktifkan jika keranjang kosong
+        // }
+
+        // function validateCheckout() {
+        //     // Mencegah pengiriman default jika ada form
+        //     event.preventDefault();
+
+        //     if (cartItems.length === 0) {
+        //         alert('Keranjang Anda masih kosong. Silakan tambahkan item sebelum checkout.');
+
+        //     } else {
+        //         // Melanjutkan ke proses checkout
+        //         alert('Melanjutkan ke proses checkout...');
+        //     }
+        // }
+
         // Function to send data to the server when clicking the Checkout button
         function checkout() {
             const uangMasuk = document.getElementById('uangMasuk').value || 0;
-
 
             const uangkembalian = parseInt(document.getElementById('uangKembalian').value.replace('Rp. ', '').replace(
                 /,/g, '')) || 0;
             const grandTotal = parseInt(document.querySelector('.grand-total').textContent.replace('Rp. ', '').replace(
                 /,/g, '')) || 0;
-            // Log data sebelum dikirim
-            // console.log({
-            //     items: cartItems,
-            //     bayar: uangMasuk,
-            //     kembalian: uangkembalian,
-            //     total: grandTotal,
-            //     date: date,
-            //     username: user
-            // });
 
             // Send data to the server
             fetch('/pos/store', {

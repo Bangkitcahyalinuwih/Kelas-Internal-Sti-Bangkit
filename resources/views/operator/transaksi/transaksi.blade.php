@@ -7,7 +7,7 @@
         <div class="container-fluid"> <!--begin::Row-->
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Dashboard</h3>
+                    <h3 class="mb-0">{{ $title }}</h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -39,6 +39,7 @@
                             <thead>
                                 <tr>
                                     <th>No Transaksi</th>
+                                    <th>Kasir</th>
                                     <th>Tanggal</th>
                                     <th>Total Bayar</th>
                                     <th>Uang Masuk</th>
@@ -49,17 +50,17 @@
                             <tbody>
                                 @foreach ($data_transaksi as $row)
                                     <tr>
-                                        <td>{{ $row->id }}</td>
+                                        <td>NT-{{ $row->id }}</td>
+                                        <td>{{ $row->user->name }}</td>
                                         <td>{{ $row->tgl_transaksi }}</td>
-                                        <td>{{ number_format($row->total_bayar) }}</td>
-                                        <td>{{ number_format($row->pembayaran_cs) }}</td>
-                                        <td>{{ number_format($row->kembalian_cs) }}</td>
+                                        <td>Rp. {{ number_format($row->total_bayar) }}</td>
+                                        <td>Rp. {{ number_format($row->pembayaran_cs) }}</td>
+                                        <td>Rp. {{ number_format($row->kembalian_cs) }}</td>
                                         <td>
                                             <a type="button" href="/detail/{{ $row->id }}" class="btn btn-primary"><i
-                                                    class="fas fa-detail"></i>Detail</a>
-                                            <button type="button" data-bs-target="#modaldelete{{ $row->id }}"
-                                                data-bs-toggle="modal" class="btn btn-danger"><i
-                                                    class="fas fa-trash"></i>Delete</button>
+                                                    class="fa-solid fa-circle-info"></i></a>
+                                            <a type="button" href="transaksi/view/pdf/{{ $row->id }}"
+                                                class="btn btn-success"><i class="fas fa-print"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach

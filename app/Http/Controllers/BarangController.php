@@ -6,12 +6,17 @@ use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\jenisbarang;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class BarangController extends Controller
 {
     public function index() 
-    { 
+    {
+        if (Auth::user()->role != 'admin') {
+        return redirect('/')->with('error', 'Unauthorized access');
+        }
+
         $title = 'Data - Barang';
         $title_table = 'Tabel Barang';
         $data_barang = Barang::with('jenisbarang')->get();    
@@ -20,6 +25,10 @@ class BarangController extends Controller
     
     public function addBarang() 
     { 
+        if (Auth::user()->role != 'admin') {
+            return redirect('/')->with('error', 'Unauthorized access');
+            }   
+
         $title = 'Tambah - Barang';
         $data_barang = jenisbarang::all();
         return view('admin.master.barang.add-barang', compact('data_barang', 'title'));
@@ -27,6 +36,9 @@ class BarangController extends Controller
 
     public function edit($id) 
     { 
+        if (Auth::user()->role != 'admin') {
+            return redirect('/')->with('error', 'Unauthorized access');
+            }   
         $title = 'Update - Barang';
         $data_barang = Barang::with('jenisbarang')->find($id);
         $data_barang_jenis = jenisbarang::all();
@@ -34,7 +46,9 @@ class BarangController extends Controller
     }   
     
     public function store(Request $request): RedirectResponse
-    {
+    {   if (Auth::user()->role != 'admin') {
+        return redirect('/')->with('error', 'Unauthorized access');
+        }   
         //validate form
         $request->validate([
             // 'nama_barang'  => 'required|min:5',
@@ -62,7 +76,10 @@ class BarangController extends Controller
     }
 
     public function update(Request $request, $id): RedirectResponse
-    {
+    {   
+        if (Auth::user()->role != 'admin') {
+            return redirect('/')->with('error', 'Unauthorized access');
+            }   
         //validate form
         $request->validate([
             // 'title'         => 'required|min:5',
@@ -110,7 +127,9 @@ class BarangController extends Controller
     }
 
     public function destroy($id)
-    {   
+    {   if (Auth::user()->role != 'admin') {
+        return redirect('/')->with('error', 'Unauthorized access');
+        }   
         $barang = Barang::findOrFail($id);
         
         Storage::delete('/public/products/'. $barang->foto);

@@ -12,13 +12,20 @@ class UserController extends Controller
 {
     public function index()  
     {       
+        if (Auth::user()->role != 'admin') {
+            return redirect('/')->with('error', 'Unauthorized access');
+        }   
             $table_title = 'Table User';
             $title = 'Data User';
             $data_user = User::all();
-        return view('admin.user.list', compact('data_user', 'title', 'table_title'));
+            return view('admin.user.list', compact('data_user', 'title', 'table_title'));
     } 
     public function store(Request $request)
     {   
+        if (Auth::user()->role != 'admin') {
+            return redirect('/')->with('error', 'Unauthorized access');
+        } 
+
         // dd($request);
         $request->validate([    
             'name' => 'required|string|max:255',
@@ -37,7 +44,10 @@ class UserController extends Controller
     } 
 
     public function update(Request $request, $id)
-    {
+    {   
+        if (Auth::user()->role != 'admin') {
+            return redirect('/')->with('error', 'Unauthorized access');
+            }   
         User::where('id', $id)
         ->where('id', $id)
         ->update([
@@ -49,8 +59,11 @@ class UserController extends Controller
         return redirect('user')->with('success', 'Data Berhasil diupdate');
     }
 
-        public function destroy($id)
-    {
+    public function destroy($id)
+    {   
+        if (Auth::user()->role != 'admin') {
+            return redirect('/')->with('error', 'Unauthorized access');
+            }   
         $user = User::where('id', $id)->delete();
         return redirect('user')->with('success', 'Data Berhasil dihapus');
     }

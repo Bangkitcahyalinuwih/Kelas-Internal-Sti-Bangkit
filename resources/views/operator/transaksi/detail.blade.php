@@ -4,7 +4,7 @@
         <div class="container-fluid"> <!--begin::Row-->
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Dashboard</h3>
+                    <h3 class="mb-0">{{ $title }}</h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -23,8 +23,9 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
-                        <h3 class="card-title">{{ $title }}</h3>
-
+                        @if ($data_detail->detail_transaksi->isNotEmpty())
+                            <h3 class="card-title">NT-{{ $data_detail->detail_transaksi->first()->transaksi_id }}</h3>
+                        @endif
                     </div>
                 </div> <!-- /.card-header -->
 
@@ -33,8 +34,6 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>id</th>
-                                    <th>transaksi_id</th>
                                     <th>nama Barang </th>
                                     <th>qty</th>
                                     <th>Harga</th>
@@ -44,13 +43,10 @@
                             <tbody>
                                 @foreach ($data_detail->detail_transaksi as $row)
                                     <tr>
-                                        <td>{{ $row->id }}</td>
-                                        <td>{{ $row->transaksi_id }}</td>
                                         <td>{{ $row->barang->nama_barang }}</td>
                                         <td>{{ $row->qty }}</td>
-                                        <td>{{ $row->barang->harga }}</td>
-                                        <td>{{ $row->subtotal }}</td>
-
+                                        <td>Rp. {{ number_format($row->barang->harga) }}</td>
+                                        <td>Rp. {{ number_format($row->subtotal) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

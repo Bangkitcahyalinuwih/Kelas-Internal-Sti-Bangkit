@@ -6,11 +6,16 @@ use App\Models\detail_transaksi;
 use App\Models\Barang;
 use App\Models\jenisbarang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TransaksiController extends Controller
-{
+{   
     public function transaksi() 
-    { 
+    {
+        if (Auth::user()->role != 'operator') {
+            return redirect('/')->with('error', 'Unauthorized access');
+        }   
+        
         $title = 'Transaksi';
         $title_table = 'Data - Transaksi';
         $data_transaksi = transaksi::with('detail_transaksi')->get();
@@ -18,39 +23,46 @@ class TransaksiController extends Controller
     }  
     public function detail($id) 
     { 
+        if (Auth::user()->role != 'operator') {
+            return redirect('/')->with('error', 'Unauthorized access');
+        }   
         $title = 'Detail - Transaksi';
         $title_table = 'Data - Detail Transaksi';
         $data_detail = transaksi::with('detail_transaksi')->find($id);
         return view('operator.transaksi.detail', compact('data_detail', 'title', 'title_table'));
     }   
 
-    // public function transaksi()
-    // {
-    //     $title = 'Data - Transaksi';
-    //     $title_detail = 'Data - detail Transaksi';
-    //     $title_transaksi = 'Data - Transaksi';
-    //     $data_detail_transaksi = Barang::all();
-    //     return view('operator.transaksi.transaksi', compact('data_detail_transaksi', 'title_detail', 'title', 'title_transaksi'));
-    // } 
+    public function cetak($id)
+    {   
+        if (Auth::user()->role != 'operator') {
+            return redirect('/')->with('error', 'Unauthorized access');
+        }   
+        $title = 'Sperpat';
+        $data_cetak = transaksi::with('detail_transaksi')->find($id);
+        return view('operator.transaksi.cetak', compact('title', 'data_cetak'));
+    }
+
+    public function view_pdf($id)
+    {   
+        if (Auth::user()->role != 'operator') {
+            return redirect('/')->with('error', 'Unauthorized access');
+        }   
+        $mpdf = new \Mpdf\Mpdf();
+        $data_cetak = transaksi::with('detail_transaksi')->find($id);
+        $mpdf->WriteHTML(view('operator.transaksi.cetak', compact('data_cetak')));
+        $mpdf->Output();
+    }
+
+    public function donload_pdf($id)
+    {    if (Auth::user()->role != 'operator') {
+        return redirect('/')->with('error', 'Unauthorized access');
+        }   
+
+        $mpdf = new \Mpdf\Mpdf();
+        $data_cetak = transaksi::with('detail_transaksi')->find($id);
+        $mpdf->WriteHTML(view('operator.transaksi.cetak', compact('data_cetak')));
+        $mpdf->Output('download-pdf','D');
+    }
     
-
-
-
-    
-    
-    // public function addBarang() 
-    // { 
-    //     $title = 'Tambah - Barang';
-    //     $data_barang = transaksi::all();
-    //     return view('admin.master.barang.add-barang', compact('data_barang', 'title'));
-    // }
-
-    // public function edit($id) 
-    // { 
-    //    $title = 'Update - Barang';
-    //    $data_barang = transaksi::with('jenisbarang')->find($id);
-    //    $data_barang_jenis = transaksi:all();
-    //     return view('admin.master.barang.update-barang', compact('data_barang', 'data_barang_jenis', 'title'));
-    // }   
     
 }

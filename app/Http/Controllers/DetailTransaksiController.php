@@ -15,7 +15,11 @@ use Illuminate\Support\Facades\Auth;
 class DetailTransaksiController extends Controller
 {
     public function index()
-    {
+    {   
+        if (Auth::user()->role != 'operator') {
+            return redirect('/')->with('error', 'Unauthorized access');
+        }   
+
         $title = 'Point of sale';
         $data_pos = barang::with('jenisbarang')->get();
         $data_transaksi = transaksi::with('user')->get();
@@ -23,37 +27,40 @@ class DetailTransaksiController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // $request->validate([
-        //     'date' => 'required|date',
-        //     'bayar' => 'required|numeric',
-        //     'total' => 'required|numeric',
-        //     'kembalian' => 'required|numeric',
-        //     'items' => 'required|array',
-        //     'items.*.id' => 'required|exists:barang,id', // Pastikan ID barang ada di tabel
-        //     'items.*.qty' => 'required|integer|min:1', // Minimal qty 1
-        //     'items.*.harga_satuan' => 'required|numeric',
-        //     'items.*.subtotal' => 'required|numeric',
-        // ]);
+{
+    // Cek apakah user adalah operator
+    if (Auth::user()->role != 'operator') {
+        return redirect('/')->with('error', 'Unauthorized access');
+    }
 
-       // Ambil ID user yang sedang login
-        $userId = Auth::id();
-    
-        // Mulai transaksi database
-        DB::beginTransaction();
-        
-        try {
-            // Simpan data ke tabel transaksi
-            $transaksi = transaksi::create([
-                'tgl_transaksi' => now(),
-                'user_id' => $userId,
-                'total_bayar' => $request->input('total'),
-              'pembayaran_cs' => str_replace('.', '', $request->input('bayar')),      // Menghilangkan titik pada pembayaran_cs
-                'kembalian_cs' => $request->input('kembalian'),
-            ]);
+    // Ambil ID user yang sedang login
+    $userId = Auth::id();
 
-            //Simpan data ke tabel detail_transaksi
-            foreach ($request->input('items') as $item) {
+    // Mulai transaksi database
+    DB::beginTransaction();
+
+    try {
+        // Simpan data ke tabel transaksi
+        $transaksi = transaksi::create([
+            'tgl_transaksi' => now(),
+            'user_id' => $userId,
+            'total_bayar' => $request->input('total'),
+            'pembayaran_cs' => str_replace('.', '', $request->input('bayar')),  // Menghilangkan titik pada pembayaran_cs
+            'kembalian_cs' => $request->input('kembalian'),
+        ]);
+
+        // Simpan data ke tabel detail_transaksi dan kurangi stok barang
+        foreach ($request->input('items') as $item) {
+            // Cari barang berdasarkan ID
+            $barang = Barang::find($item['id']);
+
+            // Cek apakah barang ditemukan dan stok mencukupi
+            if ($barang && $barang->stok >= $item['qty']) {
+                // Kurangi stok barang
+                $barang->stok -= $item['qty'];
+                $barang->save(); // Simpan perubahan stok
+
+                // Simpan detail transaksi
                 detail_transaksi::create([
                     'transaksi_id' => $transaksi->id,
                     'barang_id' => $item['id'], // Pastikan ID barang digunakan
@@ -61,20 +68,33 @@ class DetailTransaksiController extends Controller
                     'harga' => $item['harga_satuan'],
                     'subtotal' => $item['subtotal'],
                 ]);
+            } else {
+                // Jika stok tidak mencukupi, rollback dan kirim error
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stok tidak mencukupi untuk barang: ' . $barang->nama_barang
+                ], 400);
             }
-        
-            DB::commit();
-        
-            return response()->json([
-                'success' => true,
-                'message' => 'Transaksi berhasil disimpan!',
-                'transaksi' => $transaksi,
-            ]);
-        
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
         }
+
+        // Jika semua berhasil, commit transaksi database
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Transaksi berhasil disimpan!',
+            'transaksi' => $transaksi,
+        ]);
+
+    } catch (\Exception $e) {
+        // Rollback jika terjadi kesalahan
+        DB::rollBack();
+        return response()->json([
+            'error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()
+        ], 500);
     }
+}
+
 }
 
