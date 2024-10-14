@@ -126,8 +126,6 @@
                     <form method="GET" action="jenisbarang/destroy/{{ $c->id }}">
                         @csrf
                         <div class="modal-body">
-                            ...
-
                             <div class="form-group">
                                 <h5>Apakah anda yakin ingin menghapus data ini?</h5>
                             </div>

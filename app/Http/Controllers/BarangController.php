@@ -19,7 +19,7 @@ class BarangController extends Controller
 
         $title = 'Data - Barang';
         $title_table = 'Tabel Barang';
-        $data_barang = Barang::with('jenisbarang')->get();    
+        $data_barang = Barang::with('jenisbarang')->get();     
         return view('admin.master.barang.list', compact('data_barang', 'title', 'title_table'));
     }   
     
@@ -59,7 +59,7 @@ class BarangController extends Controller
 
         //upload image
         $image = $request->file('image');
-        $image->storeAs('public/products', $image->hashName());
+        $image->storeAs('public/products/', $image->hashName());
 
         $format_harga = str_replace('.', '', $request->harga);
         //create product
@@ -77,54 +77,58 @@ class BarangController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {   
+        // Check if the user is an admin
         if (Auth::user()->role != 'admin') {
             return redirect('/')->with('error', 'Unauthorized access');
-            }   
-        //validate form
-        $request->validate([
-            // 'title'         => 'required|min:5',
-            // 'description'   => 'required|min:10',
-            // 'image'         => 'image|mimes:jpeg,jpg,png|max:2048',
-            // 'price'         => 'required|numeric',
-            // 'stock'         => 'required|numeric'
-        ]);
-
-        //get product by ID
+        }   
+    
+        // Validate the form
+        // $request->validate([
+        //     'nama_barang'      => 'required|min:5',
+        //     'jenis_barang_id'  => 'required|exists:jenis_barang,id',
+        //     'harga'            => 'required|numeric',
+        //     'stok'             => 'required|numeric',
+        //     'image'            => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Image validation
+        // ]);
+    
+        // Get the product by ID
         $barang = Barang::findOrFail($id);
-
-        //check if image is uploaded
+    
+        // Check if a new image is uploaded
         if ($request->hasFile('image')) {
-
-            //upload new image
+    
+            // Upload the new image
             $image = $request->file('image');
-            $image->storeAs('public/products', $image->hashName());
-
-            //delete old image
-            Storage::delete('public/products'.$barang->image);
-
-            //update product with new image
+            $image->storeAs('public/products/', $image->hashName());
+    
+            // Delete the old image from storage (if it exists)
+            if ($barang->foto && Storage::exists('public/products/' . $barang->foto)) {
+                Storage::delete('public/products/' . $barang->foto);
+            }
+    
+            // Update the product with the new image
             $barang->update([
-                'nama_barang'         => $request->nama_barang,
-                'jenis_barang_id'   => $request->jenis_barang_id,
-                'harga'         => $request->harga,
-                'foto'         => $image->hashName(),
-                'stok'         => $request->stok
+                'nama_barang'      => $request->nama_barang,
+                'jenis_barang_id'  => $request->jenis_barang_id,
+                'harga'            => $request->harga,
+                'foto'             => $image->hashName(),
+                'stok'             => $request->stok
             ]);
-
+    
         } else {
-
-            //update product without image
+    
+            // Update the product without changing the image
             $barang->update([
-                'nama_barang'         => $request->nama_barang,
-                'jenis_barang_id'   => $request->jenis_barang_id,
-                'harga'         => $request->harga,
-                'stok'         => $request->stok
+                'nama_barang'      => $request->nama_barang,
+                'jenis_barang_id'  => $request->jenis_barang_id,
+                'harga'            => $request->harga,
+                'stok'             => $request->stok
             ]);
         }
-
-        //redirect to index
-        return redirect()->route('barang/list')->with(['success' => 'Data Berhasil Diubah!']);
+    
+        return redirect()->route('barang/list')->with('success', 'Barang updated successfully');
     }
+    
 
     public function destroy($id)
     {   if (Auth::user()->role != 'admin') {
